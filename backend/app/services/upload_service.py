@@ -22,6 +22,7 @@ import io
 import logging
 import uuid
 from pathlib import Path
+from app.ai.dataset_understanding import DatasetUnderstandingEngine
 
 import pandas as pd
 
@@ -293,6 +294,19 @@ class UploadService:
         memory_usage_bytes: float = df.memory_usage(deep=True).sum()
         memory_usage_mb: float = round(memory_usage_bytes / _BYTES_PER_MB, 4)
 
+        from app.llm.llm_service import LLMService
+
+        llm = LLMService()
+
+        dataset_info = {
+            "rows": len(df),
+            "columns": df.columns.tolist(),
+            "data_types": df.dtypes.astype(str).to_dict(),
+            "missing_values": df.isnull().sum().to_dict(),
+            "sample_rows": df.head(5).to_dict(orient="records"),
+        }
+
+        ai_result = llm.generate_insights(dataset_info)
         return UploadResponse(
             filename=filename,
             rows=rows,
@@ -303,6 +317,10 @@ class UploadService:
             duplicate_rows=duplicate_rows,
             memory_usage_mb=memory_usage_mb,
             status="success",
+            dataset_type=ai_result["dataset_type"],
+            business_summary=ai_result["business_summary"],
+            recommended_charts=ai_result["recommended_charts"],
+            possible_ml_tasks=ai_result["possible_ml_tasks"],
         )
 
     # ------------------------------------------------------------------

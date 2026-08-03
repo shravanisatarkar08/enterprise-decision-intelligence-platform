@@ -32,3 +32,6 @@ dist/
 # ===========================
 .DS_Store
 Thumbs.db
+# Uploaded datasets
+uploads/
+backend/uploads/

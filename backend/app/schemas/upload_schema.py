@@ -84,6 +84,10 @@ class UploadResponse(BaseModel):
         description="High-level result indicator. Always 'success' on HTTP 200.",
         examples=["success"],
     )
+    dataset_type: str
+    business_summary: str
+    recommended_charts: list[str]
+    possible_ml_tasks: list[str]
 
     # -----------------------------------------------------------------------
     # Extension stubs – uncomment as features are implemented
