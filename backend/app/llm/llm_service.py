@@ -1,15 +1,12 @@
-import os
 import json
 
-from groq import Groq
+from app.llm.llm_client import LLMClient
 
 
 class LLMService:
 
     def __init__(self):
-        self.client = Groq(
-            api_key=os.getenv("GROQ_API_KEY")
-        )
+        self.client = LLMClient()
 
     def generate_insights(self, dataset_info: dict):
 
@@ -40,17 +37,6 @@ Do not write explanations.
 Return ONLY JSON.
 """
 
-        response = self.client.chat.completions.create(
-            model="llama-3.3-70b-versatile",
-            messages=[
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ],
-            temperature=0.3
-        )
+        response = self.client.chat(prompt)
 
-        return json.loads(
-            response.choices[0].message.content
-        )
+        return json.loads(response)

@@ -23,6 +23,7 @@ import logging
 import uuid
 from pathlib import Path
 from app.ai.dataset_understanding import DatasetUnderstandingEngine
+from app.rag.data_store import data_store
 
 import pandas as pd
 
@@ -275,6 +276,11 @@ class UploadService:
             A populated :class:`~app.schemas.upload_schema.UploadResponse`.
         """
         rows, columns = df.shape
+
+        data_store.save_dataset(
+            filename,
+            df
+        )
 
         # Column names – preserve original order.
         column_names: list[str] = df.columns.tolist()
